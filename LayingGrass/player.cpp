@@ -2,7 +2,6 @@
 #include <string>
 #include <windows.h>
 #include <map>
-#include <vector>
 #include "player.h"
 #include "grid.h"
 
@@ -43,7 +42,7 @@ void Player::displayColorOptions() {
     }
 }
 
-int main()
+/**int main()
 {
     std::string name;
     int colorChoice;
@@ -78,4 +77,4 @@ int main()
     }
 
     return 0;
-}
+}**/

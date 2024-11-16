@@ -129,15 +129,22 @@
   <ItemGroup>
     <ClInclude Include="game.h" />
     <ClInclude Include="grid.h" />
+    <ClInclude Include="json.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="tiles.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp" />
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="tile.cpp" />
+    <ClCompile Include="tile.h" />
+    <ClCompile Include="tiles.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="tuiles.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
