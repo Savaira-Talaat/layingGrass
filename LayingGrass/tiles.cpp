@@ -2,11 +2,13 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <queue>
+#include <algorithm>
+#include <random>
 #include "json.hpp"
 #include "tiles.h"
 
 using json = nlohmann::json;
-
 
 std::vector<std::vector<char>>& Tiles::getStartingTile(const std::string& cheminFichier) {
     static auto tuiles = chargerTuiles(cheminFichier); 
@@ -18,23 +20,55 @@ std::vector<std::vector<char>>& Tiles::getStartingTile(const std::string& chemin
     }
 }
 
-void Tiles::afficher() {
-    for (const auto& ligne : matrix) {
-        for (char cell : ligne) {
+void Tiles::displayTile(const std::vector<std::vector<char>> tuile) {
+    for (size_t i = 0; i < tuile.size(); i++) {
+        for (char cell : tuile[i]) {
             std::cout << cell << ' ';
         }
         std::cout << '\n';
     }
 }
 
+// 2) crée une méthode pour demander à l'utilisateur les coordonnées pour placer la tuile 3) faire appel à placeTile 4) appeler la méthode dans main
+// faire une boucle for de 0 à nbPlayer pour qu'ils jouent tous, faire une boucle for pour les 10 tiles (faire une boucle for de 0 à 10 (<10)) à l'intérieur mettre la boucle for qui parcours les players, et là-dedans faire appel à la récupération de la dernière tuile, et ensuite le joueur peut la jouer
+std::queue<std::vector<std::vector<char>>> Tiles::iniatializeQueue(const std::string& cheminFichier) {
+    auto tiles = chargerTuiles(cheminFichier);
+    std::queue<std::vector<std::vector<char>>> tileQueue;
 
-void afficherTuile(const std::vector<std::vector<char>>& tuile) {
-    for (const auto& ligne : tuile) {
-        for (char cell : ligne) {
-            std::cout << cell << ' ';
-        }
-        std::cout << '\n';
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(tiles.begin(), tiles.end(), g);
+
+    for (const auto& tile : tiles) {
+        tileQueue.push(tile);
     }
+    return tileQueue;
+
+}
+
+void Tiles::displayTileQueue(std::queue<std::vector<std::vector<char>>> tileQueue) {
+    std::queue<std::vector<std::vector<char>>> tempQueue = tileQueue; // Copie de la file d'attente
+    std::cout << "Contenu de tileQueue :\n";
+    int i = 0;
+    while (!tempQueue.empty() && i<10) {
+        auto tuile = tempQueue.front();
+        tempQueue.pop();
+
+        // Afficher chaque tuile
+        displayTile(tuile);
+        std::cout << "----------\n";
+        i++;
+    }
+}
+
+std::vector<std::vector<char>> Tiles::getTiles(std::queue<std::vector<std::vector<char>>> tileQueue) {
+    if (tileQueue.empty()) {
+        throw std::runtime_error("Aucune tuile restante dans la file d'attente.");
+    }
+
+    auto tile = tileQueue.front();
+    tileQueue.pop();
+    return tile;
 }
 
 

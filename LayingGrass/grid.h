@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "player.h"
+
 class Grid {
 private:
     int size;
@@ -11,5 +13,5 @@ public:
         boardGame = new std::vector<std::vector<char>>(size, std::vector<char>(size, '.'));
     }
     std::vector<std::vector<char>>* getBoard();
-    void displayBoard();
+    void displayBoard(std::vector<Player> players);
 };

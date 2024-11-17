@@ -42,39 +42,26 @@ void Player::displayColorOptions() {
     }
 }
 
-/**int main()
-{
-    std::string name;
-    int colorChoice;
-    int nbPlayer = 0;
+void Player::addCoordinates(int x, int y) {
+    coordinates.emplace_back(x, y);
+}
 
-    do {
-        std::cout << "How many players are you?" << std::endl;
-        std::cin >> nbPlayer;
-    } while (nbPlayer > 9 || nbPlayer < 2);
-    
-    for (int i = 1; i <= nbPlayer; i++) {
-        std::cout << "What's your name" << std::endl;
-        std::cin >> name;
+std::vector<std::pair<int, int>> Player::getCoordinates() {
+    return coordinates;
+}
 
-
-        Player::displayColorOptions();
-        std::cin >> colorChoice;
-
-        Player p1(name, colorChoice);
-
-        std::cout << p1.getColorCode() << "Player: " << p1.getName() << "\033[0m" << std::endl;
-    };
-
-    if (nbPlayer >= 2 && nbPlayer <= 4) {
-        int s = 20;
-        Grid myGrid(s);
+bool Player::hasCoordinate(int x, int y) const {
+    for (const auto& coord : coordinates) {
+        if (coord.first == x && coord.second == y) {
+            return true;
+        }
     }
+    return false;
+}
 
-    else {
-        int s = 30;
-        Grid myGrid(s);
+void Player::displayColor() {
+    std::cout << "Coordonnées pour le joueur : " << name << std::endl;
+    for (const auto& coord : coordinates) {
+        std::cout << "(" << coord.first << ", " << coord.second << ")" << std::endl;
     }
-
-    return 0;
-}**/
+}
