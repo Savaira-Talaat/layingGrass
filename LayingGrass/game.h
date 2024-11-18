@@ -14,6 +14,7 @@ private:
 public:
     static void placeTile(std::vector<std::vector<char>> tiles, std::vector<std::vector<char>>* boardGame, int x, int y);
     static void startGame(Grid myGrid, std::vector <Player>* players, std::vector<std::vector<char>> startingTile);
-    static void askUserCoordinates(Grid myGrid, Player* player, std::queue<std::vector<std::vector<char>>>* tileQueue);
-    static int getBiggestSquare(Grid myGrid);
+    static void askUserCoordinates(Grid myGrid, Player* player, std::vector<std::vector<char>> tile);
+    static std::string getBiggestSquare(Grid myGrid, std::vector <Player> players);
+    static void rotateTileClockwise(std::vector<std::vector<char>>& tile);
 };

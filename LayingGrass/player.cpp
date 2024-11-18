@@ -24,6 +24,7 @@ Player::Player(std::string name, int colorChoice) {
     } else {
         colorCode = "\033[37m";
     };
+    this->exchangeCoupon = 1;
 };
 
 std::string Player::getName() {
@@ -64,4 +65,16 @@ void Player::displayColor() {
     for (const auto& coord : coordinates) {
         std::cout << "(" << coord.first << ", " << coord.second << ")" << std::endl;
     }
+}
+
+void Player::addCoupon() {
+    this->exchangeCoupon++;
+}
+
+int Player::nbCoupon() {
+    return exchangeCoupon;
+}
+
+void Player::removeCoupon() {
+    exchangeCoupon--;
 }

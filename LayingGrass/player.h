@@ -7,6 +7,7 @@ class Player {
 private:
     std::string name;
     std::string colorCode;
+    int exchangeCoupon;
     std::vector<std::pair<int, int>> coordinates;
 
 public:
@@ -17,5 +18,8 @@ public:
     std::vector<std::pair<int, int>> getCoordinates();
     bool hasCoordinate(int x, int y) const;
     void displayColor();
+    int nbCoupon();
+    void addCoupon();
+    void removeCoupon();
     static void displayColorOptions();
 };
