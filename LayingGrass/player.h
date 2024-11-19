@@ -21,5 +21,7 @@ public:
     int nbCoupon();
     void addCoupon();
     void removeCoupon();
+    void placeStone(std::vector<std::vector<char>>& board);
+    void stealCouponFromOtherPlayer(std::vector<Player>& players);
     static void displayColorOptions();
 };

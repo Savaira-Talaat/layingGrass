@@ -2,6 +2,8 @@
 #include <string>
 #include "grid.h"
 #include "player.h"
+#include <algorithm>
+#include <random> 
 
 void Grid::displayBoard(std::vector<Player> players) {
     std::cout << "   "; 
@@ -40,6 +42,33 @@ void Grid::displayBoard(std::vector<Player> players) {
     }
 }
 
-std::vector<std::vector<char>>* Grid::getBoard() {
-    return boardGame;
+std::vector<std::vector<char>>& Grid::getBoard() {
+    return *boardGame;
+}
+
+void Grid::distributeBonuses(int nbPlayers) {
+    int rows = boardGame->size();
+    int cols = (*boardGame)[0].size();
+
+    int tileExchangeCount = std::ceil(1.5 * nbPlayers);
+    int stoneCount = std::ceil(0.5 * nbPlayers);
+    int robberyCount = nbPlayers;
+
+    std::vector<char> bonuses(tileExchangeCount, 'E');
+    bonuses.insert(bonuses.end(), stoneCount, 'S');
+    bonuses.insert(bonuses.end(), robberyCount, 'R');
+    std::shuffle(bonuses.begin(), bonuses.end(), std::mt19937{ std::random_device{}() });
+    while (!bonuses.empty()) {
+        int x = rand() % (rows - 2) + 1;
+        int y = rand() % (cols - 2) + 1;
+        if ((*boardGame)[x][y] == '.' &&
+            (*boardGame)[x - 1][y] != 'E' && (*boardGame)[x - 1][y] != 'S' && (*boardGame)[x - 1][y] != 'R' &&
+            (*boardGame)[x + 1][y] != 'E' && (*boardGame)[x + 1][y] != 'S' && (*boardGame)[x + 1][y] != 'R' &&
+            (*boardGame)[x][y - 1] != 'E' && (*boardGame)[x][y - 1] != 'S' && (*boardGame)[x][y - 1] != 'R' &&
+            (*boardGame)[x][y + 1] != 'E' && (*boardGame)[x][y + 1] != 'S' && (*boardGame)[x][y + 1] != 'R') {
+
+            (*boardGame)[x][y] = bonuses.back();
+            bonuses.pop_back();
+        }
+    }
 }

@@ -12,6 +12,10 @@ public:
     Grid(int s) : size(s) {
         boardGame = new std::vector<std::vector<char>>(size, std::vector<char>(size, '.'));
     }
-    std::vector<std::vector<char>>* getBoard();
+    ~Grid() {
+        delete boardGame;
+    }
+    std::vector<std::vector<char>>& getBoard();
     void displayBoard(std::vector<Player> players);
+    void distributeBonuses(int nbPlayers);
 };

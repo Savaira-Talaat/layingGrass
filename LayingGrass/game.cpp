@@ -4,17 +4,17 @@
 #include "tiles.h"
 
 
-void Game::placeTile(std::vector<std::vector<char>> tiles, std::vector<std::vector<char>>* boardGame, int x, int y) {
-    for (int i = x, iS = 0; i < x + 5 && iS < 5; i++, iS++) {
-        for (int j = y, jS = 0; j < y + 3 && jS < 3; j++, jS++) {
+void Game::placeTile(const std::vector<std::vector<char>>& tiles, std::vector<std::vector<char>>& boardGame, int x, int y) {
+    for (int i = x, iS = 0; i < x + tiles.size() && iS < 5; i++, iS++) {
+        for (int j = y, jS = 0; j < y + tiles[0].size() && jS < 3; j++, jS++) {
             if (iS < tiles.size() && jS < tiles[iS].size() && tiles[iS][jS] == '#') {
-                (*boardGame)[i][j] = tiles[iS][jS];
+                boardGame[i][j] = '#';
             }
         }
     }
 }
 
-void Game::startGame(Grid myGrid,std::vector <Player>* players, std::vector<std::vector<char>> startingTile) {
+void Game::startGame(Grid& myGrid,std::vector <Player>* players, std::vector<std::vector<char>> startingTile) {
     for (size_t i = 0; i < players->size(); i++) {
         int x = 0;
         int y = 0;
@@ -28,41 +28,73 @@ void Game::startGame(Grid myGrid,std::vector <Player>* players, std::vector<std:
     }
 };
 
-void Game::askUserCoordinates(Grid myGrid, Player* player, std::vector<std::vector<char>> tile) {
-    int x, y;
-    std::cout << "Veuillez saisir les coordonnes x de votre prochaine tuile" << std::endl;
-    std::cin >> x;
-    std::cout << "Veuillez saisir les coordonnes y de votre prochaine tuile" << std::endl;
-    std::cin >> y;
-    std::cout << "Vous avez entre les coordonnes: ("<<x<<","<<y<<")\n";
-    placeTile(tile, myGrid.getBoard(), x, y);
-    for (size_t i = 0; i < tile.size(); i++) {
-        for (size_t j = 0; j < tile[i].size(); j++) {
-            player->addCoordinates(x+i, y+j);
+void checkAndApplyBonus(Player* player, std::vector<Player>& players, std::vector<std::vector<char>>& board, int x, int y) {
+    std::vector<std::pair<int, int>> directions = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
+
+    for (const auto& dir : directions) {
+        int nx = x + dir.first;
+        int ny = y + dir.second;
+
+        if (nx >= 0 && nx < board.size() && ny >= 0 && ny < board[0].size()) {
+            char bonus = board[nx][ny];
+
+            if (bonus == 'E') {
+                player->addCoupon();
+                board[nx][ny] = '.';
+            }
+            else if (bonus == 'S') {
+                player->placeStone(board);
+                board[nx][ny] = '.';
+            }
+            else if (bonus == 'R') {
+                player->stealCouponFromOtherPlayer(players);
+                board[nx][ny] = '.';
+            }
         }
     }
 }
 
+
+void Game::askUserCoordinates(Grid& myGrid, Player* player, std::vector<Player>& players, std::vector<std::vector<char>> tile) {
+    int x, y;
+    std::cout << "Veuillez saisir les coordonnees x de votre prochaine tuile" << std::endl;
+    std::cin >> x;
+    std::cout << "Veuillez saisir les coordonnees y de votre prochaine tuile" << std::endl;
+    std::cin >> y;
+    std::cout << "Vous avez saisi les coordonnees: (" << x << "," << y << ")\n";
+
+    std::cout << "Appel de la fonction placeTile\n";
+    placeTile(tile, myGrid.getBoard(), x, y);
+
+    std::cout << "Apres la fonction placeTile\n";
+    for (size_t i = 0; i < tile.size(); i++) {
+        for (size_t j = 0; j < tile[i].size(); j++) {
+            player->addCoordinates(x + i, y + j);
+        }
+    }
+    checkAndApplyBonus(player, players, myGrid.getBoard(), x, y);
+}
+
 std::string Game::getBiggestSquare(Grid myGrid, std::vector <Player> players) {
-    std::vector<std::vector<char>>* grid = myGrid.getBoard();
+    std::vector<std::vector<char>>& grid = myGrid.getBoard();
     int squareSize = 0;
     std::string winingPlayer;
     Player player = players[0];
-    for (int i = 0; i < grid->size(); i++) {
-        for (int j = 0; j < (*grid)[i].size(); j++) {
+    for (int i = 0; i < grid.size(); i++) {
+        for (int j = 0; j < grid[i].size(); j++) {
             for (size_t playerIndex = 0; playerIndex < players.size(); playerIndex++) {
                 if (players[playerIndex].hasCoordinate(i, j)) {
                     player = players[playerIndex];
                 }
             }
-            if ((*grid)[i][j] == '#') {
+            if (grid[i][j] == '#') {
                 int isSquare = 1;
                 int ii = i + 1;
                 int jj = j + 1;
                 while (isSquare == 1) {
                     for (int iii = i + 1; iii <= ii; iii++) {
                         for (int jjj = j + 1; jjj <= jj; jjj++) {
-                            if ((*grid)[iii][jjj] == '.') {
+                            if (grid[iii][jjj] == '.') {
                                 isSquare = 0;
                             }
                         }
@@ -82,23 +114,19 @@ std::string Game::getBiggestSquare(Grid myGrid, std::vector <Player> players) {
 }
 
 void Game::rotateTileClockwise(std::vector<std::vector<char>>& tile) {
-    // Vérification si la matrice est vide ou non carrée
     if (tile.empty() || tile[0].empty()) return;
 
     int rows = tile.size();
     int cols = tile[0].size();
 
-    // Créer une nouvelle matrice pour la rotation
     std::vector<std::vector<char>> rotatedTile(cols, std::vector<char>(rows));
 
-    // Remplir la nouvelle matrice en fonction de la rotation horaire
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
             rotatedTile[j][rows - i - 1] = tile[i][j];
         }
     }
 
-    // Copier la matrice rotée dans la matrice d'origine
     tile = rotatedTile;
 }
 
@@ -113,12 +141,12 @@ int main()
     auto& startingTile = tiles.getStartingTile("tuiles.json");
     std::queue<std::vector<std::vector<char>>> tileQueue = tiles.iniatializeQueue("tuiles.json");
     do {
-        std::cout << "How many players are you?" << std::endl;
+        std::cout << "Combien de joueurs etes-vous ?" << std::endl;
         std::cin >> nbPlayer;
     } while (nbPlayer > 9 || nbPlayer < 2);
 
     for (int i = 1; i <= nbPlayer; i++) {
-        std::cout << "What's your name" << std::endl;
+        std::cout << "Quel est votre pseudo ?" << std::endl;
         std::cin >> name;
 
 
@@ -128,29 +156,30 @@ int main()
         Player p1(name, colorChoice);
         players.push_back(p1);
 
-        std::cout << p1.getColorCode() << "Player: " << p1.getName() << "\033[0m" << std::endl;
     };
 
     for (size_t i = 0; i < players.size(); ++i) {
-        std::cout << "Player : " << players[i].getColorCode() << players[i].getName() << "\033[0m" << std::endl;
+        std::cout << "Joueur : " << players[i].getColorCode() << players[i].getName() << "\033[0m" << std::endl;
     }
     int s = 30;
     if (nbPlayer >= 2 && nbPlayer <= 4) {
         s = 20;
     }
     Grid myGrid(s);
+    myGrid.distributeBonuses(nbPlayer);
     myGrid.displayBoard(players);
     Game::startGame(myGrid, &players, startingTile);
+    std::cout << "Grid: " << myGrid.getBoard().size() << "\n";
     int totalTurn = 1 * nbPlayer;
     for (int turn = 1; turn <= 3; turn++) {
-        std::cout << "turn number: " << turn << std::endl;
+        std::cout << "Tour numero: " << turn << std::endl;
         for (size_t i = 0; i < players.size(); ++i) {
             char response;
             do {
-                std::cout << "Player: " << players[i].getName() << "turn\n";
-                std::cout << "Take tile (T)\n";
-                std::cout << "Exchange tile - " << players[i].nbCoupon() << " available (E)\n";
-                std::cout << "Display queue (D)\n";
+                std::cout << "Joueur: " << players[i].getName() << std::endl;
+                std::cout << "Prendre une tuile (T)\n";
+                std::cout << "Echanger la tuile - " << players[i].nbCoupon() << " disponible (E)\n";
+                std::cout << "Afficher la file (D)\n";
                 std::cin >> response;
                 if (response == 'd' || response == 'D') {
                     tiles.displayTileQueue(tileQueue);
@@ -161,19 +190,19 @@ int main()
                 }
                 else if (response == 't' || response == 'T') {
                     char tileResponse;
-                    std::cout << "Tile to place\n";
+                    std::cout << "Tuile a placer\n";
                     auto tile = tileQueue.front();
                     tileQueue.pop();
                     do {
                         tiles.displayTile(tile);
-                        std::cout << "Rotate tile (R)\n";
-                        std::cout << "Place tile (P)\n";
+                        std::cout << "Rotationner la tuile (R)\n";
+                        std::cout << "Placer la tuile (P)\n";
                         std::cin >> tileResponse;
                         if (tileResponse == 'r' || tileResponse == 'R') {
                             Game::rotateTileClockwise(tile);
                         }
                         else if (tileResponse == 'p' || tileResponse == 'P') {
-                            Game::askUserCoordinates(myGrid, &players[i], tile);
+                            Game::askUserCoordinates(myGrid, &players[i], players, tile);
                             myGrid.displayBoard(players);
                         }
                     } while (tileResponse != 'p' && tileResponse != 'P');
@@ -182,6 +211,6 @@ int main()
         } 
     }
     std::string winner = Game::getBiggestSquare(myGrid, players);
-    std::cout << "The winner is: " << winner << std::endl;
+    std::cout << "Le gagnant est: " << winner << std::endl;
     return 0;
 }

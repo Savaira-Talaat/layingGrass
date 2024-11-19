@@ -6,15 +6,15 @@
 #include "grid.h"
 
 const std::map<int, std::string> colorMap = {
-{1, "\033[31m"}, // rouge
-{2, "\033[32m"}, // vert
-{3, "\033[33m"}, // jaune
-{4, "\033[34m"}, // bleu
-{5, "\033[35m"}, // magenta
-{6, "\033[36m"}, // cyan
-{7, "\033[37m"}, // blanc
-{8, "\033[93m"}, // jaune clair
-{9, "\033[91m"}, // saumon
+{1, "\033[31m"},
+{2, "\033[32m"},
+{3, "\033[33m"},
+{4, "\033[34m"},
+{5, "\033[35m"},
+{6, "\033[36m"},
+{7, "\033[37m"},
+{8, "\033[93m"},
+{9, "\033[91m"},
 };
 
 Player::Player(std::string name, int colorChoice) {
@@ -37,8 +37,7 @@ std::string Player::getColorCode() {
 
 void Player::displayColorOptions() {
     std::cout << "Choose your color: " << std::endl;
-    for (const auto& color : colorMap) { //le auto permet au compilateur de trouver automatiquement le type d'une variable et & c'est juste pour dire que la variable sera une valeur de réf à l'objet qu'elle représente et non une copie.
-                                       //(La référence permet directement d'accéder à l'objet original ce qui économise la mémoire et les copies couteuses)
+    for (const auto& color : colorMap) {
         std::cout << color.first << ": " << color.second << "Color" << "\033[0m" << std::endl;
     }
 }
@@ -77,4 +76,37 @@ int Player::nbCoupon() {
 
 void Player::removeCoupon() {
     exchangeCoupon--;
+}
+
+void Player::placeStone(std::vector<std::vector<char>>& board) {
+    int x, y;
+    std::cout << "Veuillez choisir où placer une pierre (x y) : ";
+    std::cin >> x >> y;
+
+    if (board[x][y] == '.') {
+        board[x][y] = 'X';
+    }
+    else {
+        std::cout << "Impossible de placer une pierre ici." << std::endl;
+    }
+}
+
+void Player::stealCouponFromOtherPlayer(std::vector<Player>& players) {
+    std::cout << "Choisissez un joueur à voler : " << std::endl;
+    for (size_t i = 0; i < players.size(); ++i) {
+        if (&players[i] != this) {
+            std::cout << i << ": " << players[i].getName() << std::endl;
+        }
+    }
+
+    int choice;
+    std::cin >> choice;
+
+    if (choice >= 0 && choice < players.size() && &players[choice] != this) {
+        players[choice].removeCoupon();
+        this->addCoupon();
+    }
+    else {
+        std::cout << "Choix invalide !" << std::endl;
+    }
 }

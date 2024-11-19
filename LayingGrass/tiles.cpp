@@ -29,8 +29,6 @@ void Tiles::displayTile(const std::vector<std::vector<char>> tuile) {
     }
 }
 
-// 2) crée une méthode pour demander à l'utilisateur les coordonnées pour placer la tuile 3) faire appel à placeTile 4) appeler la méthode dans main
-// faire une boucle for de 0 à nbPlayer pour qu'ils jouent tous, faire une boucle for pour les 10 tiles (faire une boucle for de 0 à 10 (<10)) à l'intérieur mettre la boucle for qui parcours les players, et là-dedans faire appel à la récupération de la dernière tuile, et ensuite le joueur peut la jouer
 std::queue<std::vector<std::vector<char>>> Tiles::iniatializeQueue(const std::string& cheminFichier) {
     auto tiles = chargerTuiles(cheminFichier);
     std::queue<std::vector<std::vector<char>>> tileQueue;
@@ -47,14 +45,13 @@ std::queue<std::vector<std::vector<char>>> Tiles::iniatializeQueue(const std::st
 }
 
 void Tiles::displayTileQueue(std::queue<std::vector<std::vector<char>>> tileQueue) {
-    std::queue<std::vector<std::vector<char>>> tempQueue = tileQueue; // Copie de la file d'attente
+    std::queue<std::vector<std::vector<char>>> tempQueue = tileQueue;
     std::cout << "Contenu de tileQueue :\n";
     int i = 0;
     while (!tempQueue.empty() && i<10) {
         auto tuile = tempQueue.front();
         tempQueue.pop();
 
-        // Afficher chaque tuile
         displayTile(tuile);
         std::cout << "----------\n";
         i++;
