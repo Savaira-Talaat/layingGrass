@@ -128,11 +128,10 @@ void Game::rotateTileClockwise(std::vector<std::vector<char>>& tile) {
     }
 
     tile = rotatedTile;
+
 }
 
-
-int main()
-{
+void Game::newGame(){
     std::string name;
     int colorChoice;
     int nbPlayer = 0;
@@ -208,9 +207,8 @@ int main()
                     } while (tileResponse != 'p' && tileResponse != 'P');
                 }
             } while (response != 't' && response != 'T');
-        } 
+        }
     }
     std::string winner = Game::getBiggestSquare(myGrid, players);
     std::cout << "Le gagnant est: " << winner << std::endl;
-    return 0;
 }

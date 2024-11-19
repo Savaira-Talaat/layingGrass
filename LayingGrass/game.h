@@ -17,4 +17,5 @@ public:
     static void askUserCoordinates(Grid& myGrid, Player* player, std::vector<Player>& players, std::vector<std::vector<char>> tile);
     static std::string getBiggestSquare(Grid myGrid, std::vector <Player> players);
     static void rotateTileClockwise(std::vector<std::vector<char>>& tile);
+    static void newGame();
 };
