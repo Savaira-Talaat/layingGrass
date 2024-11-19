@@ -6,3 +6,4 @@ Le projet a été développé en C++.
 Il est nécessaire d'avoir un IDE ainsi qu'un compilateur C++. (Nous avons utilisé Microsoft Visual Studio 2022)
 #### Guide d'installation
 Afin de veiller au bon lancement du jeu, il faut noter que le fichier principal est le menu.cpp, c'est dans ce fichier que se trouve le main.
+Veiller à bien répartir les fichier d'en-tête (headers) et les fichiers sources (cpp) afin que le jeu se lance bien.

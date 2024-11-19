@@ -169,8 +169,8 @@ void Game::newGame(){
     myGrid.displayBoard(players);
     Game::startGame(myGrid, &players, startingTile);
     std::cout << "Grid: " << myGrid.getBoard().size() << "\n";
-    int totalTurn = 1 * nbPlayer;
-    for (int turn = 1; turn <= 3; turn++) {
+    int totalTurn = 1 * 10.67;
+    for (int turn = 1; turn <= totalTurn; turn++) {
         std::cout << "Tour numero: " << turn << std::endl;
         for (size_t i = 0; i < players.size(); ++i) {
             char response;
